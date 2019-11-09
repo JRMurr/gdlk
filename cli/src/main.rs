@@ -3,7 +3,7 @@
 use failure::Error;
 use gdlk;
 use std::{
-    fs::File,
+    fs::{File, OpenOptions},
     io::{self, Read, Write},
     path::PathBuf,
 };
@@ -44,7 +44,10 @@ fn run(opt: Opt) -> Result<(), Error> {
             // open during the entire compilation
             let mut output_dest: Box<dyn Write> =
                 if let Some(output_path) = output {
-                    box File::open(&output_path)?
+                    box OpenOptions::new()
+                        .write(true)
+                        .create(true)
+                        .open(&output_path)?
                 } else {
                     box io::stdout()
                 };
